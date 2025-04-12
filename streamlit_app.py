@@ -1,3 +1,6 @@
+import os
+os.environ["STREAMLIT_WATCHDOG"] = "false"  # Disable Streamlit's file watcher
+
 import streamlit as st
 from PIL import Image
 import numpy as np
