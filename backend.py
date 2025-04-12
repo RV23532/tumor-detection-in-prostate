@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 import gdown  # Ensure this is added to requirements.txt
+from huggingface_hub import hf_hub_download  # Import huggingface_hub
 
 # Define constants
 IMAGE_HEIGHT = 512
@@ -126,9 +127,17 @@ class AttUNet(torch.nn.Module):
 def download_model():
     if not os.path.exists(MODEL_PATH):
         print("Downloading model file from Hugging Face...")
-        url = "https://huggingface.co/RV23532/tumor-detection-in-prostrate-project-v0/resolve/main/512_X_512_True_att_unet_model_val_loss_0.4386.pth"
-        gdown.download(url, MODEL_PATH, quiet=False)
-        print("Model downloaded successfully.")
+        try:
+            # Download the model file from Hugging Face
+            hf_hub_download(
+                repo_id="RV23532/tumor-detection-in-prostrate-project-v0",
+                filename="512_X_512_True_att_unet_model_val_loss_0.4386.pth",
+                cache_dir="models"  # Cache the file in the 'models' directory
+            )
+            print("Model downloaded successfully.")
+        except Exception as e:
+            print(f"Error downloading model: {e}")
+            raise
 
 # Load the model
 def load_model():
