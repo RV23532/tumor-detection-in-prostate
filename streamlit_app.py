@@ -10,7 +10,7 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 if uploaded_file:
     image = Image.open(uploaded_file)
 else:
-    image = Image.open("images/default_image.jpg")  # Use a default image from the 'images' folder
+    image = Image.open("images/default_image.png")  # Use a default image from the 'images' folder
 
 edges = cv2.Canny(np.array(image), 100, 200)
 tab1, tab2 = st.tabs(["Detected edges", "Original"])
