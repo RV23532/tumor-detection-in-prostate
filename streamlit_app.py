@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
 import os
+import gdown  # To download from google drive
 
 # Define constants
 IMAGE_HEIGHT = 512
@@ -130,9 +131,18 @@ class AttUNet(nn.Module):
 
         return d1
 
+# Function to download the model file from Google Drive
+def download_model():
+    if not os.path.exists(MODEL_PATH):
+        st.write("Downloading model file...")
+        url = "https://drive.google.com/uc?id=1zGI0uvbOapmJ5UineFPt4yMKsuVrZyFu"
+        gdown.download(url, MODEL_PATH, quiet=False)
+        st.write("Model downloaded successfully.")
+
 # Load the model
 @st.cache_resource
 def load_model():
+    download_model()  # Ensure the model is downloaded before loading
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = AttUNet(num_classes=NUM_CLASSES).to(device)
     
@@ -210,3 +220,4 @@ for class_idx, color_rgb in class_to_color.items():
 
 # Display applied mask
 tab4.image(applied_mask_image, use_column_width=True)
+
