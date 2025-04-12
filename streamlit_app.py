@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 import requests
 
-st.write("Streamlit is also great for more traditional ML use cases like computer vision or NLP. Here's an example of edge detection using OpenCV. 👁️") 
+st.write("Tumor Detection in Prostrate 👁️") 
 
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 if uploaded_file:
