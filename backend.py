@@ -4,14 +4,14 @@ from PIL import Image
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
-import gdown  # Ensure this is added to requirements.txt
 from huggingface_hub import hf_hub_download  # Import huggingface_hub
 
 # Define constants
 IMAGE_HEIGHT = 512
 IMAGE_WIDTH = 512
 NUM_CLASSES = 4
-MODEL_PATH = 'models/512_X_512_True_att_unet_model_val_loss_0.4386.pth'
+REPO_ID = "RV23532/tumor-detection-in-prostrate-project-v0"
+MODEL_FILENAME = "512_X_512_True_att_unet_model_val_loss_0.4386.pth"
 
 # Mapping class indices to colors
 color_to_class = {
@@ -123,42 +123,17 @@ class AttUNet(torch.nn.Module):
 
         return self.conv_last(dec1)
 
-# Function to download the model file from Hugging Face
-def download_model():
-    if not os.path.exists(MODEL_PATH):
-        print("Downloading model file from Hugging Face...")
-        try:
-            # Download the model file from Hugging Face
-            hf_hub_download(
-                repo_id="RV23532/tumor-detection-in-prostrate-project-v0",
-                filename="512_X_512_True_att_unet_model_val_loss_0.4386.pth",
-                cache_dir="models"  # Cache the file in the 'models' directory
-            )
-            print("Model downloaded successfully.")
-        except Exception as e:
-            print(f"Error downloading model: {e}")
-            raise
-
 # Load the model
 def load_model():
-    if not os.path.exists(MODEL_PATH):
-        print("Model file not found.")
-        return None, None  # Indicate that the model is not yet available
-    try:
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        model = AttUNet(num_classes=NUM_CLASSES).to(device)
-        print("Loading model state dictionary...")
-        checkpoint = torch.load(MODEL_PATH, map_location=device)
-        model_state_dict = model.state_dict()
-        filtered_state_dict = {k: v for k, v in checkpoint.items() if k in model_state_dict}
-        model_state_dict.update(filtered_state_dict)
-        model.load_state_dict(model_state_dict)
-        model.eval()
-        print("Model loaded successfully.")
-        return model, device
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        return None, None
+    print("⏳ Downloading and loading model from Hugging Face...")
+    model_path = hf_hub_download(repo_id=REPO_ID, filename=MODEL_FILENAME)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = AttUNet(num_classes=NUM_CLASSES).to(device)
+    checkpoint = torch.load(model_path, map_location=device)
+    model.load_state_dict(checkpoint)
+    model.eval()
+    print("✅ Model loaded successfully!")
+    return model, device
 
 # Preprocess the image
 def preprocess_image(image):

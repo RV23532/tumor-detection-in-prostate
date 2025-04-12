@@ -7,25 +7,16 @@ from backend import (
     perform_inference,
     map_classes_to_colors,
     calculate_class_statistics,
-    class_to_color,
-    download_model  # Import download_model
+    class_to_color
 )
 
 # Streamlit app
 st.title("Tumor Detection in Prostate 👁️")
 
-# Check if the model is available
-with st.spinner("Checking for model file..."):
+# Load the model
+with st.spinner("Checking for model file and loading..."):
     model, device = load_model()
-    if model is None:
-        st.warning("Model file not found. Downloading now...")
-        with st.spinner("Downloading model file. Please wait..."):
-            download_model()
-        st.success("Model downloaded successfully!")
-        model, device = load_model()
-        if model is None:
-            st.error("Failed to load the model. Please try again.")
-            st.stop()
+st.success("✅ Model loaded successfully!")
 
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
